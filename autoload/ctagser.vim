@@ -46,12 +46,30 @@ function ctagser#index_system()
     endfor
 endfunction
 
+" Returns the filename with a prefix '+ ' or '- ', depending on if the
+" file is readable.
 function s:test_tags_file(file)
     return (filereadable(a:file) ? '+' : '-')
                 \ . ' '
                 \ . a:file
 endfunction
 
+" Lists contents of &tags with information about globs and availability.
+"
+" Example:
+"   set tags=~/project/dir/**/tags,./tags,~/tags,/usr/example/*/tags
+"
+" results in this output:
+"
+"   + /home/user/project/dir/**/tags:
+"     + /home/user/project/dir/src/tags
+"     + /home/user/project/dir/tests/tags
+"   - ./tags
+"   + /home/user/tags
+"   - /usr/example/*/tags
+"
+" If `./tags` does not exist and `/usr/example/*/tags` globs to an empty
+" list.
 function ctagser#list_tags()
     let tags = split(&tags, ',')
     let output = []

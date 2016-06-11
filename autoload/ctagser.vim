@@ -47,17 +47,9 @@ function ctagser#index_system()
 endfunction
 
 function s:test_tags_file(file)
-    let output_entry = ''
-
-    if filereadable(a:file)
-        let output_entry .= '+ '
-    else
-        let output_entry .= '- '
-    endif
-
-    let output_entry .= a:file
-
-    return output_entry
+    return (filereadable(a:file) ? '+' : '-')
+                \ . ' '
+                \ . a:file
 endfunction
 
 function ctagser#list_tags()

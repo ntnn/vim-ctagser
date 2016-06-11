@@ -28,17 +28,22 @@ endfunction
 function ctagser#index_system()
     let exe = s:bindir . 'tagscreate'
 
-    if exists('*job_start')
-        let job = job_start(exe,
-                    \   {
-                    \     "out_cb": "ctagser#job_stdout_handler",
-                    \     "err_cb": "ctagser#job_stderr_handler",
-                    \     "exit_cb": "ctagser#job_exit_handler",
-                    \   }
-                    \ )
-    else
-        call system(exe)
-    endif
+    for params in g:ctagser_params
+        echom "Creating tags for" split(params)[0]
+
+        if exists('*job_start')
+            let job = job_start([exe] + split(params),
+                        \   {
+                        \     "out_cb": "ctagser#job_stdout_handler",
+                        \     "err_cb": "ctagser#job_stderr_handler",
+                        \     "exit_cb": "ctagser#job_exit_handler",
+                        \   }
+                        \ )
+        else
+            call system(exe . params)
+        endif
+
+    endfor
 endfunction
 
 function s:test_tags_file(file)

@@ -38,4 +38,6 @@ index_path() {
 
 # overruling folders (like /usr/local/include overrules /usr/include)
 # should be indexed last
-index_path "c" "/usr/include" "/usr/local/include"
+# index_path "c" "/usr/include" "/usr/local/include"
+# index_path "language" "path [path...]"
+index_path $@

@@ -1,0 +1,41 @@
+#!/usr/bin/env sh
+
+export TAGSDIR="${TAGSDIR:=$HOME/.tags}"
+
+mkdir -p "$TAGSDIR"
+
+index_file() {
+    language="$1"
+    folder="$2"
+    file="$3"
+
+    ident="${file#$folder}"
+    ident="${ident#\/}"
+    target="$TAGSDIR/$language/$ident.ctags"
+    targetfolder="${ident%/*}"
+
+    if [ ! -e "$target" ] || [ "$file" -nt "$target" ]; then
+        if [ "$targetfolder" != "$ident" ]; then
+            mkdir -p "$TAGSDIR/$language/$targetfolder"
+        fi
+
+        echo "Indexing $file to $target"
+        ctags -f "$target" "$file"
+    fi
+}
+
+index_path() {
+    language="$1"
+    mkdir -p "$TAGSDIR/$language"
+    shift
+
+    for folder in $@; do
+        for file in $(find "$folder" -type f); do
+            index_file "$language" "$folder" "$file"
+        done
+    done
+}
+
+# overruling folders (like /usr/local/include overrules /usr/include)
+# should be indexed last
+index_path "c" "/usr/include" "/usr/local/include"

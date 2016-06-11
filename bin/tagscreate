@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-export TAGSDIR="${TAGSDIR:=$HOME/.tags}"
+export TAGSDIR="${TAGSDIR:=${HOME}/.tags}"
 
 mkdir -p "$TAGSDIR"
 

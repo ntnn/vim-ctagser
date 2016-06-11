@@ -13,17 +13,29 @@ function ctagser#list_headers(file)
                 \ )
 endfunction
 
+function ctagser#job_stdout_handler(channel, msg)
+    echom "tagscreate:" a:msg
+endfunction
+
+function ctagser#job_stderr_handler(channel, msg)
+    echohl Error | echom "tagscreate:" a:msg | echohl None
+endfunction
+
+function ctagser#job_exit_handler(channel, status)
+    echom "tagscreate finished with status" a:status
+endfunction
+
 function ctagser#index_system()
-    let exe = s:bindir . '/tagscreate'
+    let exe = s:bindir . 'tagscreate'
 
     if exists('*job_start')
-        call job_start(exe)
-    elseif exists(':Make')
-        " check for dispatch's :Make
-        let makeprg_save = &l:makeprg
-        let &l:makeprg = exe
-        Make
-        let &l:makeprg = makeprg_save
+        let job = job_start(exe,
+                    \   {
+                    \     "out_cb": "ctagser#job_stdout_handler",
+                    \     "err_cb": "ctagser#job_stderr_handler",
+                    \     "exit_cb": "ctagser#job_exit_handler",
+                    \   }
+                    \ )
     else
         call system(exe)
     endif

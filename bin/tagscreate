@@ -4,17 +4,30 @@ export TAGSDIR="${TAGSDIR:=${HOME}/.tags}"
 
 mkdir -p "$TAGSDIR"
 
+error() {
+    echo "$@" >&2
+}
+
 index_file() {
     language="$1"
     folder="$2"
     file="$3"
 
+    # /usr/include/curl/curl.h => curl/curl.h
     ident="${file#$folder}"
+    # cut off leading slashes
     ident="${ident#\/}"
+    # TAGSDIR/c/curl/curl.h
     target="$TAGSDIR/$language/$ident.ctags"
+    # curl
     targetfolder="${ident%/*}"
 
+    # if target does not exist or if the system file is newer than the
+    # tags file
     if [ ! -e "$target" ] || [ "$file" -nt "$target" ]; then
+        # check if the target (TAGSDIR/c/curl/curl.h) will be in
+        # a subdir in the languages tags dir (in this examples - yes)
+        # and if so create it
         if [ "$targetfolder" != "$ident" ]; then
             mkdir -p "$TAGSDIR/$language/$targetfolder"
         fi
@@ -30,6 +43,11 @@ index_path() {
     shift
 
     for folder in $@; do
+        if [ ! -d "$folder" ]; then
+            error "$folder does not exist"
+            continue
+        fi
+
         for file in $(find "$folder" -type f); do
             index_file "$language" "$folder" "$file"
         done

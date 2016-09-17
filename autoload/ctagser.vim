@@ -1,3 +1,7 @@
+" ctagser.vim - add header files
+" Maintainer:	Nelo-T. Wallus <nelo@wallus.de>
+" License:	MIT
+
 let s:bindir = expand('<sfile>:p:h:h') . '/bin/'
 
 " Returns a list with the output of list-system-headers, which takes one

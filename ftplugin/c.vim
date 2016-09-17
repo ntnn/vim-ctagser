@@ -1,3 +1,7 @@
+" ctagser.vim - add header files
+" Maintainer:	Nelo-T. Wallus <nelo@wallus.de>
+" License:	MIT
+
 function! s:tags()
     setl tags<
 

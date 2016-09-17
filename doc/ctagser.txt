@@ -1,0 +1,124 @@
+ctagser.txt         For Vim version 7.4+    Last change: 2016 September 17
+
+Help on using vim-ctagser                           *ctagser* *vim-ctagser*
+
+    1. Introduction ............................... |ctagser-intro|
+    2. Usage ...................................... |ctagser-usage|
+    3. Configuration .............................. |ctagser-configuration|
+    4. Commands ................................... |ctagser-commands|
+
+==========================================================================
+    1. INTRODUCTION                                 *ctagser-intro*
+
+vim-ctagser is a plugin to manage creating ctags files for each system header
+and adding them to your files where appropriate.
+
+This is mainly useful to get concise tags-completion for the libraries you're
+using in the current file. On binary distributions it doesn't make much of
+a difference and you can just generate one big tags-file for all system
+headers - on source distributions or with many libraries installed this makes
+indexing and completion tedious.
+
+==========================================================================
+    2. USAGE                                        *ctagser-usage*
+
+Install, run |:CtagsIndex|, wait for it to finish, start working.
+After updating your system or installing new libraries you can run it again,
+it'll only update and create ctags files for new and updates headers.
+
+==========================================================================
+    3. CONFIGURATION                                *ctagser-configuration*
+
+Available environment variables:
+
+    TAGSDIR ....................................... |ctagser-TAGSDIR|
+
+Available options:
+
+    ctagser_params ................................ |ctagser-params|
+
+--------------------------------------------------------------------------
+                                                    *ctagser-TAGSDIR*
+Scope: environment ~
+Type: string ~
+Default: $HOME/.tags ~
+
+Defines the base directory for vim-ctagser to place and retrieve tags-files
+from. The layout is '$TAGSDIR/$language/$path', where '$path' represents the
+string passed to include statements.
+
+If you want a different location export it in your ~/.bash_profile or
+~/.zprofile
+
+Example: >
+    export TAGSDIR=$HOME/.tags
+<
+
+--------------------------------------------------------------------------
+                                                    *ctagser-params*
+Scope: global ~
+Type: list of strings ~
+Default: ['c /usr/include /usr/local/include'] ~
+
+Defines a list of directories for each language supported by vim-ctagsers.
+The first parameter is the '$language' part in the tagsdir, the paths are
+folders from where you're including headers.
+
+==========================================================================
+    4. COMMANDS                                     *ctagser-commands*
+
+Available global commands:
+
+    |:ListTags|
+    |:CtagsIndex|
+
+Available buflocal commands:
+
+    |:CtagsShowHeaders|
+    |:CtagsDetectHeaders|
+
+--------------------------------------------------------------------------
+*:ListTags*
+
+    Lists the content of 'tags' and their availability.
+
+    Example: >
+    :ListTags
+    + /home/ntnn/tags/gutentags/home-ntnn-prog-projects-libargparse-tags
+    - ./tags
+    - ./TAGS
+    - tags
+    - TAGS
+    - /home/ntnn/prog/projects/libargparse/**/tags
+    - /home/ntnn/.tags/c/stdbool.h.ctags
+    + /home/ntnn/.tags/c/stdio.h.ctags
+    + /home/ntnn/.tags/c/stdlib.h.ctags
+    + /home/ntnn/.tags/c/string.h.ctags
+<
+    The leading minus signals that the file is listed in 'tags' but doesn't
+    exist. For globs this means that the glob doesn't expand to anything.
+    If a glob expands the glob itself is printed with the files it expands
+    to indented.
+
+--------------------------------------------------------------------------
+*:CtagsIndex*
+
+    Index system headers. Done with a job if vim is recent enough, see |job|.
+
+--------------------------------------------------------------------------
+*:CtagsShowHeaders*
+
+    List detected system headers for current file.
+
+    Example: >
+    The following system headers have been detected by ctagser:
+      stdbool.h
+      stdio.h
+      stdlib.h
+      string.h
+<
+
+--------------------------------------------------------------------------
+*:CtagsDetectHeaders*
+
+    Redetect system headers used in the file and append to 'tags'.

@@ -13,6 +13,14 @@ function ctagser#list_headers(file)
                 \ )
 endfunction
 
+function ctagser#print_headers(file)
+    echo "The following system headers have been detected by ctagser:"
+    for line in ctagser#list_headers(a:file)
+        echo "  " . line
+    endfor
+endfunction
+
+
 function ctagser#job_stdout_handler(channel, msg)
     echom "tagscreate:" a:msg
 endfunction

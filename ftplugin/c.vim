@@ -10,3 +10,4 @@ endfunction
 
 call s:tags()
 command! -buffer CtagsDetectHeaders call s:tags()
+com! -buffer CtagsShowHeaders call ctagser#print_headers(expand('%'))

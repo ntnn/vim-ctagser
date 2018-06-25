@@ -25,34 +25,73 @@ function ctagser#print_headers(file)
 endfunction
 
 
-function ctagser#job_stdout_handler(channel, msg)
+function ctagser#job_start_stdout_handler(channel, msg)
     echom "tagscreate:" a:msg
 endfunction
 
-function ctagser#job_stderr_handler(channel, msg)
+function ctagser#job_start_stderr_handler(channel, msg)
     echohl Error | echom "tagscreate:" a:msg | echohl None
 endfunction
 
-function ctagser#job_exit_handler(channel, status)
-    echom "tagscreate finished with status" a:status
+function ctagser#job_start_exit_handler(channel, status)
+    if a:status == 0
+        echom "tagscreate: success"
+    else
+        echom "tagscreate: failed with code" a:status
+    endif
+endfunction
+
+function ctagser#jobstart_stdout_handler(channel, msg, stream)
+    if len(a:msg) == 1 && a:msg[0] == ''
+        return
+    endif
+    echom "tagscreate:" join(a:msg, " ")
+endfunction
+
+function ctagser#jobstart_stderr_handler(channel, msg, stream)
+    if len(a:msg) == 1 && a:msg[0] == ''
+        return
+    endif
+    echohl Error | echom "tagscreate:" join(a:msg, " ") | echohl None
+endfunction
+
+function ctagser#jobstart_exit_handler(channel, status, stream)
+    if a:status == 0
+        echom "tagscreate: success"
+    else
+        echom "tagscreate: failed with code" a:status
+    endif
 endfunction
 
 function ctagser#index_system()
-    let exe = s:bindir . 'tagscreate'
+    let l:exe = s:bindir . 'tagscreate'
 
     for params in g:ctagser_params
         echom "Creating tags for" split(params)[0]
 
         if exists('*job_start')
-            let job = job_start([exe] + split(params),
+            let job = job_start([l:exe] + split(params),
                         \   {
-                        \     "out_cb": "ctagser#job_stdout_handler",
-                        \     "err_cb": "ctagser#job_stderr_handler",
-                        \     "exit_cb": "ctagser#job_exit_handler",
+                        \     "out_cb": "ctagser#job_start_stdout_handler",
+                        \     "err_cb": "ctagser#job_start_stderr_handler",
+                        \     "exit_cb": "ctagser#job_start_exit_handler",
+                        \   }
+                        \ )
+        elseif exists('*jobstart')
+            let job = jobstart([l:exe] + split(params),
+                        \   {
+                        \     "on_stdout": "ctagser#jobstart_stdout_handler",
+                        \     "on_stderr": "ctagser#jobstart_stderr_handler",
+                        \     "on_exit": "ctagser#jobstart_exit_handler",
                         \   }
                         \ )
         else
-            call system(exe . params)
+            let l:msg = system(exe . " " . params)
+            if v:shell_error == 0
+              echom "tagscreate: success"
+            else
+              echom "tagscreate: failed with code" v:shell_error
+            fi
         endif
 
     endfor

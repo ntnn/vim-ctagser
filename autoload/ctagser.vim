@@ -86,12 +86,12 @@ function ctagser#index_system()
                         \   }
                         \ )
         else
-            let l:msg = system(exe . " " . params)
+            system(exe . " " . params)
             if v:shell_error == 0
               echom "tagscreate: success"
             else
               echom "tagscreate: failed with code" v:shell_error
-            fi
+            endif
         endif
 
     endfor

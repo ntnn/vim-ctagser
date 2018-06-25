@@ -86,7 +86,10 @@ function ctagser#index_system()
                         \   }
                         \ )
         else
-            system(exe . " " . params)
+            let l:cmdout = systemlist(exe . " " . params)
+            for l:line in l:cmdout
+              echom "tagscreate:" l:line
+            endfor
             if v:shell_error == 0
               echom "tagscreate: success"
             else

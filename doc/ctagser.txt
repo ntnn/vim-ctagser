@@ -1,4 +1,4 @@
-ctagser.txt         For Vim version 7.4+    Last change: 2016 September 17
+ctagser.txt         For Vim version 7.4+    Last change: 2018 June 30
 
 Help on using vim-ctagser                           *ctagser* *vim-ctagser*
 

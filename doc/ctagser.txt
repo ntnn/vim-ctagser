@@ -103,7 +103,10 @@ Available buflocal commands:
 --------------------------------------------------------------------------
 *:CtagsIndex*
 
-    Index system headers. Done with a job if vim is recent enough, see |job|.
+    Index system headers.
+
+    In recent versions of Vim and Neovim, this is done asynchronously via a
+    job. For more information, see |job| (Vim) or |job-control| (Neovim).
 
 --------------------------------------------------------------------------
 *:CtagsShowHeaders*
